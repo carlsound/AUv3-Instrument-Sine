@@ -11,7 +11,7 @@
 		8914806822DC374B00440577 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8914806722DC374B00440577 /* Assets.xcassets */; };
 		8914806B22DC374B00440577 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8914806922DC374B00440577 /* MainMenu.xib */; };
 		8914806E22DC374B00440577 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8914806D22DC374B00440577 /* main.m */; };
-		8914807D22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.m */; };
+		8914807D22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm */; };
 		8914808022DC37DB00440577 /* AudioUnitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8914807F22DC37DB00440577 /* AudioUnitViewController.m */; };
 		8914808322DC37DB00440577 /* AudioUnitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8914808122DC37DB00440577 /* AudioUnitViewController.xib */; };
 		8914808822DC37DB00440577 /* AUv3-instrument-Sine-Appex.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8914807922DC37DB00440577 /* AUv3-instrument-Sine-Appex.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -19,6 +19,7 @@
 		8914809122DC380000440577 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8914809022DC380000440577 /* AudioToolbox.framework */; };
 		8914809322DC381300440577 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8914809222DC381300440577 /* AVFoundation.framework */; };
 		8914809522DC382200440577 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8914809422DC382200440577 /* CoreAudioKit.framework */; };
+		8930D55D22DEECF30057EC58 /* maximilian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8930D55C22DEECF30057EC58 /* maximilian.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +57,7 @@
 		8914806F22DC374B00440577 /* AUv3_Instrument_Sine.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AUv3_Instrument_Sine.entitlements; sourceTree = "<group>"; };
 		8914807922DC37DB00440577 /* AUv3-instrument-Sine-Appex.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "AUv3-instrument-Sine-Appex.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8914807B22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AUv3_instrument_Sine_AppexAudioUnit.h; sourceTree = "<group>"; };
-		8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AUv3_instrument_Sine_AppexAudioUnit.m; sourceTree = "<group>"; };
+		8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AUv3_instrument_Sine_AppexAudioUnit.mm; sourceTree = "<group>"; };
 		8914807E22DC37DB00440577 /* AudioUnitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioUnitViewController.h; sourceTree = "<group>"; };
 		8914807F22DC37DB00440577 /* AudioUnitViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioUnitViewController.m; sourceTree = "<group>"; };
 		8914808222DC37DB00440577 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AudioUnitViewController.xib; sourceTree = "<group>"; };
@@ -66,6 +67,8 @@
 		8914809022DC380000440577 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8914809222DC381300440577 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8914809422DC382200440577 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
+		8930D55B22DEECF30057EC58 /* maximilian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maximilian.h; sourceTree = "<group>"; };
+		8930D55C22DEECF30057EC58 /* maximilian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maximilian.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,8 +129,10 @@
 		8914807A22DC37DB00440577 /* AUv3-instrument-Sine-Appex */ = {
 			isa = PBXGroup;
 			children = (
+				8930D55C22DEECF30057EC58 /* maximilian.cpp */,
+				8930D55B22DEECF30057EC58 /* maximilian.h */,
 				8914807B22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.h */,
-				8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.m */,
+				8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm */,
 				8914807E22DC37DB00440577 /* AudioUnitViewController.h */,
 				8914807F22DC37DB00440577 /* AudioUnitViewController.m */,
 				8914808122DC37DB00440577 /* AudioUnitViewController.xib */,
@@ -257,8 +262,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8914807D22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.m in Sources */,
+				8914807D22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm in Sources */,
 				8914808022DC37DB00440577 /* AudioUnitViewController.m in Sources */,
+				8930D55D22DEECF30057EC58 /* maximilian.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
