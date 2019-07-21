@@ -10,7 +10,10 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#import "maximilian.h"
+#import "BufferedAudioBus.hpp"
+#import "InstrumentDSPKernel.hpp"
+
+#import "maximilian.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,13 +25,11 @@ const AUParameterAddress PARAMETER_1 = 0;
 
 @interface AUv3_instrument_Sine_AppexAudioUnit ()
 
-@property (nonatomic, readwrite) AUParameterTree *parameterTree;
+@property (nonatomic, readwrite) AUParameterTree* parameterTree;
 
-@property AUAudioUnitBus *outputBus; // https://developer.apple.com/documentation/audiotoolbox/auaudiounitbus?language=objc
+@property AUAudioUnitBus* outputBus; // https://developer.apple.com/documentation/audiotoolbox/auaudiounitbus?language=objc
 
-@property AUAudioUnitBusArray *inputBusArray; // https://developer.apple.com/documentation/audiotoolbox/auaudiounitbusarray?language=objc
-
-@property AUAudioUnitBusArray *outputBusArray;
+@property AUAudioUnitBusArray *outputBusArray; // https://developer.apple.com/documentation/audiotoolbox/auaudiounitbusarray?language=objc
 
 @end
 
@@ -40,16 +41,24 @@ const AUParameterAddress PARAMETER_1 = 0;
 
 AUParameter *_parameter_1;
 
-AUAudioUnitBus* _inputBus;
-
 AudioStreamBasicDescription _streamBasicDescription; // local copy of the asbd that block can capture
 // https://developer.apple.com/documentation/coreaudio/audiostreambasicdescription?language=objc
 
-UInt64 _totalFrames = 0;
+UInt64 _totalFrames;
 
-AUValue _paramteter1Value = 20;  // https://developer.apple.com/documentation/audiotoolbox/auvalue?language=objc
+AUValue _paramteter1Value;  // https://developer.apple.com/documentation/audiotoolbox/auvalue?language=objc
 
 AudioBufferList _renderAudioBufferList; // https://developer.apple.com/documentation/coreaudio/audiobufferlist?language=objc
+
+AVAudioPCMBuffer* _pcmBuffer;  // https://developer.apple.com/documentation/avfoundation/avaudiopcmbuffer?language=objc
+
+const AudioBufferList* _immutableAudioBufferList; // https://developer.apple.com/documentation/avfoundation/avaudiobuffer/1385579-audiobufferlist?language=objc
+
+AudioBufferList* _mutableAudioBufferList;
+
+InstrumentDSPKernel _kernel;
+BufferedOutputBus _outputBusBuffer;
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,15 +89,23 @@ AudioBufferList _renderAudioBufferList; // https://developer.apple.com/documenta
     _parameterTree = [AUParameterTree createTreeWithChildren:@[ _parameter_1 ]];
     
     // Initialize a default format for the busses.
-    AVAudioFormat *defaultFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:44100.0 channels:2]; // https://developer.apple.com/documentation/avfoundation/avaudioformat?language=objc
+    AVAudioFormat *defaultFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:44100.0
+                                                                                  channels:2]; // https://developer.apple.com/documentation/avfoundation/avaudioformat?language=objc
     
     _streamBasicDescription = *defaultFormat.streamDescription;
     
     // Create the input and output busses (AUAudioUnitBus).
-    _outputBus = [[AUAudioUnitBus alloc] initWithFormat:defaultFormat error:nil];
+    //_outputBus = [[AUAudioUnitBus alloc] initWithFormat:defaultFormat error:nil];
+    _outputBusBuffer.init(defaultFormat, 2);
+    _outputBus = _outputBusBuffer.bus;
     
     // Create the input and output bus arrays (AUAudioUnitBusArray).
-    _outputBusArray = [[AUAudioUnitBusArray alloc] initWithAudioUnit:self busType:AUAudioUnitBusTypeOutput busses: @[_outputBus]];
+    _outputBusArray = [[AUAudioUnitBusArray alloc] initWithAudioUnit:self
+                                                             busType:AUAudioUnitBusTypeOutput
+                                                              busses: @[_outputBus]];
+    
+    // Make a local pointer to the kernel to avoid capturing self.
+    __block InstrumentDSPKernel *instrumentKernel = &_kernel;
     
     // implementorValueObserver is called when a parameter changes value.
     _parameterTree.implementorValueObserver = ^(AUParameter *param, AUValue value) {
@@ -161,9 +178,23 @@ AudioBufferList _renderAudioBufferList; // https://developer.apple.com/documenta
     // Validate that the bus formats are compatible.
     // Allocate your resources.
     
-    _renderAudioBufferList.mNumberBuffers = 2;
+    _renderAudioBufferList.mNumberBuffers = 2; // stereo
     
     _totalFrames = 0;
+    
+    // http://www.rockhoppertech.com/blog/writing-an-audio-unit-v3-instrument/
+    /*
+    _pcmBuffer = [[AVAudioPCMBuffer alloc] initWithPCMFormat: _outputBus.format
+                                               frameCapacity: self.maximumFramesToRender];
+    
+    _immutableAudioBufferList = _pcmBuffer.audioBufferList;
+    _mutableAudioBufferList = _pcmBuffer.mutableAudioBufferList;
+    */
+    
+    _outputBusBuffer.allocateRenderResources(self.maximumFramesToRender);
+    
+    _kernel.init(self.outputBus.format.channelCount, self.outputBus.format.sampleRate);
+    _kernel.reset();
     
     return YES;
 }
@@ -182,10 +213,15 @@ AudioBufferList _renderAudioBufferList; // https://developer.apple.com/documenta
     
     // Capture in locals to avoid ObjC member lookups. If "self" is captured in render, we're doing it wrong. See sample code.
     
+    __block InstrumentDSPKernel *state = &_kernel;
+    
     AUValue* parameter1Capture = &_paramteter1Value;
     AudioStreamBasicDescription *streamBasicDescriptionCapture = &_streamBasicDescription;
     __block UInt64 *totalFramesCapture = &_totalFrames;
     AudioBufferList *renderAudioBufferListCapture = &_renderAudioBufferList;
+    
+    http://www.rockhoppertech.com/blog/writing-an-audio-unit-v3-instrument/
+    //__block AVAudioPCMBuffer* pcm = _pcmBuffer;
     
     return ^AUAudioUnitStatus(AudioUnitRenderActionFlags *actionFlags,
                                     const AudioTimeStamp *timestamp,
@@ -197,6 +233,7 @@ AudioBufferList _renderAudioBufferList; // https://developer.apple.com/documenta
         // Do event handling and signal processing here.
         
         //http://www.rockhoppertech.com/blog/auv3-midi/
+        /*
         while (realtimeEventListHead != NULL) {
             switch (realtimeEventListHead->head.eventType) {
                 case AURenderEventParameter:
@@ -226,9 +263,23 @@ AudioBufferList _renderAudioBufferList; // https://developer.apple.com/documenta
                     break;
                 }
             }
+         */
         
+            
+        // http://www.rockhoppertech.com/blog/writing-an-audio-unit-v3-instrument/
+        /*
+        AudioBufferList *outAudioBufferList = outputData;
+        if (outAudioBufferList->mBuffers[0].mData == nullptr) {
+            
+            for (UInt32 i = 0; i < outAudioBufferList->mNumberBuffers; ++i) {
+                
+                outAudioBufferList->mBuffers[i].mData = pcm.mutableAudioBufferList->mBuffers[i].mData;
+        }
+         */
         
+            
         // copy samples from AudioBufferList, apply gain multiplier, write to outputData
+        /*
         size_t sampleSize = sizeof(Float32);
         for (int frame = 0; frame < frameCount; frame++) {
             
@@ -247,10 +298,16 @@ AudioBufferList _renderAudioBufferList; // https://developer.apple.com/documenta
                        sampleSize);
             }
         }
+         */
+        
+        
+        _outputBusBuffer.prepareOutputBufferList(outputData, frameCount, true);
+        state->setBuffers(outputData);
+        state->processWithEvents(timestamp, frameCount, realtimeEventListHead);
+        
         
         return noErr;
     };
 }
 
 @end
-

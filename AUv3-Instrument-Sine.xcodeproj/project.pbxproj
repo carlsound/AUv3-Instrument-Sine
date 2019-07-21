@@ -19,6 +19,7 @@
 		8914809122DC380000440577 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8914809022DC380000440577 /* AudioToolbox.framework */; };
 		8914809322DC381300440577 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8914809222DC381300440577 /* AVFoundation.framework */; };
 		8914809522DC382200440577 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8914809422DC382200440577 /* CoreAudioKit.framework */; };
+		891CEEF122E4E40900C41DB6 /* DSPKernel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 891CEEF022E4E40900C41DB6 /* DSPKernel.mm */; };
 		8930D55D22DEECF30057EC58 /* maximilian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8930D55C22DEECF30057EC58 /* maximilian.cpp */; };
 /* End PBXBuildFile section */
 
@@ -67,7 +68,11 @@
 		8914809022DC380000440577 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8914809222DC381300440577 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8914809422DC382200440577 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
-		8930D55B22DEECF30057EC58 /* maximilian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maximilian.h; sourceTree = "<group>"; };
+		891CEEED22E4E40900C41DB6 /* BufferedAudioBus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BufferedAudioBus.hpp; sourceTree = "<group>"; };
+		891CEEEE22E4E40900C41DB6 /* InstrumentDSPKernel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = InstrumentDSPKernel.hpp; sourceTree = "<group>"; };
+		891CEEEF22E4E40900C41DB6 /* DSPKernel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DSPKernel.hpp; sourceTree = "<group>"; };
+		891CEEF022E4E40900C41DB6 /* DSPKernel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DSPKernel.mm; sourceTree = "<group>"; };
+		8930D55B22DEECF30057EC58 /* maximilian.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = maximilian.hpp; sourceTree = "<group>"; };
 		8930D55C22DEECF30057EC58 /* maximilian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maximilian.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,15 +134,11 @@
 		8914807A22DC37DB00440577 /* AUv3-instrument-Sine-Appex */ = {
 			isa = PBXGroup;
 			children = (
-				8930D55C22DEECF30057EC58 /* maximilian.cpp */,
-				8930D55B22DEECF30057EC58 /* maximilian.h */,
-				8914807B22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.h */,
-				8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm */,
-				8914807E22DC37DB00440577 /* AudioUnitViewController.h */,
-				8914807F22DC37DB00440577 /* AudioUnitViewController.m */,
-				8914808122DC37DB00440577 /* AudioUnitViewController.xib */,
-				8914808422DC37DB00440577 /* Info.plist */,
-				8914808522DC37DB00440577 /* AUv3_instrument_Sine_Appex.entitlements */,
+				891CEEE722E4E2A600C41DB6 /* Model */,
+				891CEEEA22E4E35700C41DB6 /* View */,
+				891CEEE922E4E2DD00C41DB6 /* Controller */,
+				891CEEEB22E4E36E00C41DB6 /* Property List */,
+				891CEEEC22E4E38600C41DB6 /* Entitlements */,
 			);
 			path = "AUv3-instrument-Sine-Appex";
 			sourceTree = "<group>";
@@ -151,6 +152,62 @@
 				8914808E22DC37F600440577 /* AudioUnit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		891CEEE722E4E2A600C41DB6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				891CEEF222E4EB5F00C41DB6 /* libraries */,
+				8914807B22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.h */,
+				8914807C22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm */,
+				891CEEEE22E4E40900C41DB6 /* InstrumentDSPKernel.hpp */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		891CEEE922E4E2DD00C41DB6 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				8914807E22DC37DB00440577 /* AudioUnitViewController.h */,
+				8914807F22DC37DB00440577 /* AudioUnitViewController.m */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		891CEEEA22E4E35700C41DB6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				8914808122DC37DB00440577 /* AudioUnitViewController.xib */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		891CEEEB22E4E36E00C41DB6 /* Property List */ = {
+			isa = PBXGroup;
+			children = (
+				8914808422DC37DB00440577 /* Info.plist */,
+			);
+			name = "Property List";
+			sourceTree = "<group>";
+		};
+		891CEEEC22E4E38600C41DB6 /* Entitlements */ = {
+			isa = PBXGroup;
+			children = (
+				8914808522DC37DB00440577 /* AUv3_instrument_Sine_Appex.entitlements */,
+			);
+			name = Entitlements;
+			sourceTree = "<group>";
+		};
+		891CEEF222E4EB5F00C41DB6 /* libraries */ = {
+			isa = PBXGroup;
+			children = (
+				891CEEED22E4E40900C41DB6 /* BufferedAudioBus.hpp */,
+				891CEEEF22E4E40900C41DB6 /* DSPKernel.hpp */,
+				891CEEF022E4E40900C41DB6 /* DSPKernel.mm */,
+				8930D55B22DEECF30057EC58 /* maximilian.hpp */,
+				8930D55C22DEECF30057EC58 /* maximilian.cpp */,
+			);
+			name = libraries;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,6 +319,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				891CEEF122E4E40900C41DB6 /* DSPKernel.mm in Sources */,
 				8914807D22DC37DB00440577 /* AUv3_instrument_Sine_AppexAudioUnit.mm in Sources */,
 				8914808022DC37DB00440577 /* AudioUnitViewController.m in Sources */,
 				8930D55D22DEECF30057EC58 /* maximilian.cpp in Sources */,

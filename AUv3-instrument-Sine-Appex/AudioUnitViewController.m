@@ -20,6 +20,10 @@
 - (void) viewDidLoad {
     [super viewDidLoad];
     
+    self.preferredContentSize = NSMakeSize(480, 272);
+    self.view.wantsLayer = true;
+    self.view.layer.backgroundColor = NSColor.darkGrayColor.CGColor;
+    
     if (!audioUnit) {
         return;
     }

@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>AUv3-instrument-Sine-Appex</string>
+	<string>AUv3-Instrument-Sine-Appex</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -30,13 +30,13 @@
 			<array>
 				<dict>
 					<key>description</key>
-					<string>AUv3-instrument-Sine-Appex</string>
+					<string>AUv3-Instrument-Sine-Appex</string>
 					<key>factoryFunction</key>
 					<string>AudioUnitViewController</string>
 					<key>manufacturer</key>
-					<string>CRLS</string>
+					<string>crls</string>
 					<key>name</key>
-					<string>Carlsound: AUv3-instrument-Sine-Appex</string>
+					<string>Carlsound: AUv3-Instrument-Sine-Appex</string>
 					<key>sandboxSafe</key>
 					<true/>
 					<key>subtype</key>
