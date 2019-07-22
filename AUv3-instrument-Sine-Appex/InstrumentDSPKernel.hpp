@@ -14,6 +14,8 @@
 #import <memory>
 #import "maximilian.hpp"
 
+const int QTY_VOICES = 10;
+
 const double kTwoPi = 2.0 * M_PI;
 
 enum {
@@ -63,6 +65,8 @@ public:
 		
 		int stage = stageOff;
 		int envRampSamples = 0;
+        
+        std::shared_ptr<maxiOsc> maximillianOscillator;
 		
 		void clear() {
 			stage = stageOff;
@@ -88,6 +92,9 @@ public:
 			if (next) next->prev = this;
 			kernel->playingNotes = this;
 			++kernel->playingNotesCount;
+            
+            maximillianOscillator = std::make_shared<maxiOsc>();
+            maximillianOscillator->phaseReset(0.0);
 		}
 		
 		void noteOn(int noteNumber, int velocity)
@@ -112,7 +119,7 @@ public:
 			}
 		}
 		
-		void run(int n, float* outL, float* outR, std::shared_ptr<maxiOsc> oscillator)
+		void run(int n, float* outL, float* outR)
 		{
 			int framesRemaining = n;
 			while (framesRemaining) {
@@ -123,7 +130,7 @@ public:
 					case stageAttack : {
 						int framesThisTime = std::min(framesRemaining, envRampSamples);
 						for (int i = 0; i < framesThisTime; ++i) {
-                            double x = envLevel * oscillator->sinewave(oscFreq); //envLevel * pow3(sin(oscPhase)); // cubing the sine adds 3rd harmonic.
+                            double x = envLevel * this->maximillianOscillator->sinewave(oscFreq); //envLevel * pow3(sin(oscPhase)); // cubing the sine adds 3rd harmonic.
 							*outL++ += ampL * x;
 							*outR++ += ampR * x;
 							envLevel += envSlope;
@@ -139,7 +146,7 @@ public:
 					}
 					case stageSustain : {
 						for (int i = 0; i < framesRemaining; ++i) {
-							double x = oscillator->sinewave(oscFreq); //pow3(sin(oscPhase));
+							double x = this->maximillianOscillator->sinewave(oscFreq); //pow3(sin(oscPhase));
 							*outL++ += ampL * x;
 							*outR++ += ampR * x;
 							oscPhase += oscFreq;
@@ -150,7 +157,7 @@ public:
 					case stageRelease : {
 						int framesThisTime = std::min(framesRemaining, envRampSamples);
 						for (int i = 0; i < framesThisTime; ++i) {
-							double x = envLevel * oscillator->sinewave(oscFreq); //envLevel * pow3(sin(oscPhase));
+							double x = envLevel * this->maximillianOscillator->sinewave(oscFreq); //envLevel * pow3(sin(oscPhase));
 							*outL++ += ampL * x;
 							*outR++ += ampR * x;
 							envLevel += envSlope;
@@ -188,8 +195,13 @@ public:
         
         maximillianSettings = std::make_shared<maxiSettings>();
         
-        maximillianOscillator = std::make_shared<maxiOsc>();
-        maximillianOscillator->phaseReset(0.0);
+        /*
+        for(int i = 0; i < QTY_VOICES; i++)
+        {
+            maximillianOscillator[i] = std::make_shared<maxiOsc>();
+            maximillianOscillator[i]->phaseReset(0.0);
+        }
+         */
 		
 		frequencyScale = 2. * M_PI / sampleRate;
 	}
@@ -280,7 +292,7 @@ public:
 
 		NoteState* noteState = playingNotes;
 		while (noteState) {
-			noteState->run(frameCount, outL, outR, maximillianOscillator);
+			noteState->run(frameCount, outL, outR);
 			noteState = noteState->next;
 		}
 		
@@ -301,7 +313,7 @@ private:
 	AudioBufferList* outBufferListPtr = nullptr;
     
     std::shared_ptr<maxiSettings> maximillianSettings;
-    std::shared_ptr<maxiOsc> maximillianOscillator;
+    //std::shared_ptr<maxiOsc> maximillianOscillator[QTY_VOICES];
 
 public:
 
